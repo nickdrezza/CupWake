@@ -4,7 +4,7 @@ import Testing
 @testable import CupWake
 
 @Suite("Cup artwork") @MainActor struct IconTests {
-    @Test func nativeCupHasDistinctStatesAtBothScales() throws {
+    @Test func cupIsCenteredAndOnlyOnHasSteamAtBothScales() throws {
         let directory = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
             .appendingPathComponent(".build/icon-previews")
@@ -27,11 +27,27 @@ import Testing
                 image.draw(in: NSRect(x: 0, y: 0, width: 18, height: 18))
                 NSGraphicsContext.restoreGraphicsState()
                 var total = 0
+                var left = size
+                var right = -1
+                var top = size
+                var bottom = -1
+                var steam = 0
                 for y in 0..<size {
                     for x in 0..<size {
-                        total += Int((bitmap.colorAt(x: x, y: y)?.alphaComponent ?? 0) * 255)
+                        let alpha = bitmap.colorAt(x: x, y: y)?.alphaComponent ?? 0
+                        total += Int(alpha * 255)
+                        if y < 2 * scale { steam += Int(alpha * 255) }
+                        if alpha > 0.08 {
+                            left = min(left, x)
+                            right = max(right, x)
+                            top = min(top, y)
+                            bottom = max(bottom, y)
+                        }
                     }
                 }
+                #expect(abs(Double(left + right + 1 - size)) <= Double(scale))
+                #expect(abs(Double(top + bottom + 1 - size)) <= Double(scale))
+                #expect(isOn ? steam > 0 : steam == 0)
                 ink.append(total)
                 previews.append((isOn, scale, bitmap))
                 let png = try #require(bitmap.representation(using: .png, properties: [:]))

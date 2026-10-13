@@ -47,10 +47,9 @@ The UI tool timed out when it connected to the menu-bar-only app. Its Finder scr
 blank. Physical left-click, right-click, and VoiceOver behavior could not be verified.
 No new UI test result is claimed.
 
-The lid must be closed on the actual Mac to verify continued execution and network access.
-Test both battery and AC power, with no external display. Test power changes while the lid
-is closed. Also test display sleep and an explicit Apple-menu Sleep command.
-Remote agent access was not tested. CupWake does not configure a remote-access service.
+One physical lid-close test on battery passed. See the log evidence below.
+Tests on AC power and across power changes remain open. Also test display sleep and an
+explicit Apple-menu Sleep command. CupWake does not configure a remote-access service.
 
 The lid control is an internal Apple interface. Other macOS versions and Intel hardware were
 not tested. Energy use was not measured. The app does not monitor battery or heat.
@@ -59,11 +58,31 @@ temporary lid control. Do not use another lid-control app at the same time.
 
 Developer ID signing and notarization remain open. This build has a local ad hoc signature.
 
+## Physical lid-close test
+
+The user tested remote Codex access with CupWake Off, then On. The user reported that access
+failed with Off and succeeded with On. macOS logs support this result. Times use America/Chicago
+on 13 October 2026.
+
+| State | Lid close | System sleep | Lid open or wake | Result |
+| --- | --- | --- | --- | --- |
+| Off, from the user's report | 14:17:59.108 | 14:18:04.180, Clamshell Sleep | 14:19:57.191 | The Mac slept for 113 seconds on battery. |
+| On, CupWake PID 9478 | 14:22:10.944 | No Sleep or DarkWake entry in this interval | 14:25:11.535 | The lid stayed closed for about 181 seconds. No sleep or wake event was recorded. |
+
+`pmset -g log` records the sleep and wake events. Unified `powerd` logs record the lid changes.
+CupWake's assertion summary appears at 14:24:21.431. It was released at 14:25:16.693 with an age
+of 3 minutes 9 seconds. Both test intervals used battery power.
+
+This verifies one physical test on this Mac. The remote-access result comes from the user.
+No independent network trace was captured. Filtered power-log evidence is in
+`.build/lid-test-2026-10-13.log`.
+The filtered lid-change records are in `.build/lid-state-2026-10-13.log`.
+
 ## Menu bar icon update
 
-The menu bar uses the native `mug` and `mug.fill` SF Symbols. The symbols use a 14-point
-regular weight and template tint. The icon test passed at 1× and 2×. Both states were
-visually checked on light and dark backgrounds.
-
-The new icon build is prepared in `dist/CupWake.app`. The installed app was not restarted
-or replaced during the user's lid-close test.
+The cup shape, fill, steam, and line weights are preserved from the installed version.
+Each state is centered from its visible bounds. Off moves up by 2.25 points. On moves down
+by 0.125 points. Both states move right by 0.3125 points.
+The centering and steam checks passed at 1× and 2×. Light and dark previews were inspected.
+The release build and strict signature check passed. The installed executable matched
+the tested build. The app was restarted in its default Off state.
