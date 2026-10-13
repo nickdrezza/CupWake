@@ -6,9 +6,9 @@ import AppKit
         let image = NSImage(size: NSSize(width: 18, height: 18), flipped: false) { _ in
             NSGraphicsContext.saveGraphicsState()
             defer { NSGraphicsContext.restoreGraphicsState() }
-            // Center the visible shape. Off has no steam above the cup.
+            // Keep the cup at the same position in both states.
             let offset = NSAffineTransform()
-            offset.translateX(by: 0.3125, yBy: isOn ? -0.125 : 2.25)
+            offset.translateX(by: 0.3125, yBy: 0.375)
             offset.concat()
             NSColor.black.set()
             let handle = NSBezierPath()

@@ -4,7 +4,7 @@ import Testing
 @testable import CupWake
 
 @Suite("Cup artwork") @MainActor struct IconTests {
-    @Test func cupIsCenteredAndOnlyOnHasSteamAtBothScales() throws {
+    @Test func cupPositionMatchesAndOnlyOnHasSteamAtBothScales() throws {
         let directory = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
             .appendingPathComponent(".build/icon-previews")
@@ -12,6 +12,7 @@ import Testing
         var previews: [(Bool, Int, NSBitmapImageRep)] = []
         for scale in [1, 2] {
             var ink: [Int] = []
+            var cupBounds: [[Int]] = []
             for isOn in [false, true] {
                 let image = CupIcon.image(isOn: isOn)
                 #expect(image.isTemplate)
@@ -29,9 +30,11 @@ import Testing
                 var total = 0
                 var left = size
                 var right = -1
-                var top = size
-                var bottom = -1
                 var steam = 0
+                var bodyLeft = size
+                var bodyRight = -1
+                var bodyTop = size
+                var bodyBottom = -1
                 for y in 0..<size {
                     for x in 0..<size {
                         let alpha = bitmap.colorAt(x: x, y: y)?.alphaComponent ?? 0
@@ -40,14 +43,18 @@ import Testing
                         if alpha > 0.08 {
                             left = min(left, x)
                             right = max(right, x)
-                            top = min(top, y)
-                            bottom = max(bottom, y)
+                            if y >= 5 * scale {
+                                bodyLeft = min(bodyLeft, x)
+                                bodyRight = max(bodyRight, x)
+                                bodyTop = min(bodyTop, y)
+                                bodyBottom = max(bodyBottom, y)
+                            }
                         }
                     }
                 }
                 #expect(abs(Double(left + right + 1 - size)) <= Double(scale))
-                #expect(abs(Double(top + bottom + 1 - size)) <= Double(scale))
                 #expect(isOn ? steam > 0 : steam == 0)
+                cupBounds.append([bodyLeft, bodyRight, bodyTop, bodyBottom])
                 ink.append(total)
                 previews.append((isOn, scale, bitmap))
                 let png = try #require(bitmap.representation(using: .png, properties: [:]))
@@ -55,6 +62,7 @@ import Testing
             }
             #expect(ink[0] > 0)
             #expect(ink[1] > ink[0])
+            #expect(cupBounds[0] == cupBounds[1])
         }
         try writeGallery(previews, to: directory.appendingPathComponent("cups.png"))
     }

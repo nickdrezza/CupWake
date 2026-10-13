@@ -104,7 +104,7 @@ sh Scripts/package-release.sh
 | `AwakeController.swift` | One owned guard, heartbeat, startup check, and exit cleanup. |
 | `AwakeWorker.swift` | Idle assertion, lid request, timeout, and restore. |
 | `LidSleepControl.swift` | IOKit calls and session ownership. |
-| `CupIcon.swift` | Centered vector cup icons. On has fill and steam. |
+| `CupIcon.swift` | Vector cup icons at one position. On has fill and steam. |
 
 No network request, power monitor, or privileged helper is used.
 The parent sends a heartbeat every two seconds. It prevents App Nap while the guard runs.

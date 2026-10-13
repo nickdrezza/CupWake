@@ -81,8 +81,9 @@ The filtered lid-change records are in `.build/lid-state-2026-10-13.log`.
 ## Menu bar icon update
 
 The cup shape, fill, steam, and line weights are preserved from the installed version.
-Each state is centered from its visible bounds. Off moves up by 2.25 points. On moves down
-by 0.125 points. Both states move right by 0.3125 points.
-The centering and steam checks passed at 1× and 2×. Light and dark previews were inspected.
+Both states use the same cup position. On moves up by 0.5 points from the previous build.
+Off uses that position with no fill or steam. The total drawing offset is 0.3125 points
+right and 0.375 points up from the original artwork.
+The cup-position and steam checks passed at 1× and 2×. Light and dark previews were inspected.
 The release build and strict signature check passed. The installed executable matched
 the tested build. The app was restarted in its default Off state.
