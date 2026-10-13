@@ -58,3 +58,12 @@ If both the app and guard are forcibly killed, cleanup cannot run. A restart cle
 temporary lid control. Do not use another lid-control app at the same time.
 
 Developer ID signing and notarization remain open. This build has a local ad hoc signature.
+
+## Menu bar icon update
+
+The menu bar uses the native `mug` and `mug.fill` SF Symbols. The symbols use a 14-point
+regular weight and template tint. The icon test passed at 1× and 2×. Both states were
+visually checked on light and dark backgrounds.
+
+The new icon build is prepared in `dist/CupWake.app`. The installed app was not restarted
+or replaced during the user's lid-close test.

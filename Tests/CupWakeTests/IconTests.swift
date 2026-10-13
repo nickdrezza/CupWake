@@ -4,7 +4,7 @@ import Testing
 @testable import CupWake
 
 @Suite("Cup artwork") @MainActor struct IconTests {
-    @Test func offHasNoSteamAndOnHasFillAndSteamAtBothScales() throws {
+    @Test func nativeCupHasDistinctStatesAtBothScales() throws {
         let directory = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
             .appendingPathComponent(".build/icon-previews")
@@ -32,13 +32,6 @@ import Testing
                         total += Int((bitmap.colorAt(x: x, y: y)?.alphaComponent ?? 0) * 255)
                     }
                 }
-                var steam = 0
-                for y in 0..<(4 * scale) {
-                    for x in 0..<size {
-                        steam += Int((bitmap.colorAt(x: x, y: y)?.alphaComponent ?? 0) * 255)
-                    }
-                }
-                #expect(isOn ? steam > 0 : steam == 0)
                 ink.append(total)
                 previews.append((isOn, scale, bitmap))
                 let png = try #require(bitmap.representation(using: .png, properties: [:]))

@@ -2,7 +2,7 @@
 
 **Keep your Mac awake. One click.**
 
-![CupWake: an empty cup means Off. A full cup with steam means On.](docs/cupwake.svg)
+CupWake uses native SF Symbols in the menu bar. An outline mug means Off. A filled mug means On.
 
 A small native macOS app that keeps agents and other tasks running with the lid closed.
 Click to turn it on. Click again to turn it off. That is the whole app.
@@ -13,7 +13,7 @@ Build this branch to use the new lid control. This change has no published relea
 ## One cup. Two states.
 
 - **Empty cup:** Off.
-- **Full cup with steam:** On. CupWake prevents idle sleep and lid-close sleep.
+- **Filled cup:** On. CupWake prevents idle sleep and lid-close sleep.
 - **Right-click:** Quit CupWake. Control-click works too.
 
 CupWake starts Off. It has no window, settings, timer, or saved state.
@@ -104,7 +104,7 @@ sh Scripts/package-release.sh
 | `AwakeController.swift` | One owned guard, heartbeat, startup check, and exit cleanup. |
 | `AwakeWorker.swift` | Idle assertion, lid request, timeout, and restore. |
 | `LidSleepControl.swift` | IOKit calls and session ownership. |
-| `CupIcon.swift` | Empty and full vector cup icons. |
+| `CupIcon.swift` | Native SF Symbols for the empty and filled cup. |
 
 No network request, power monitor, or privileged helper is used.
 The parent sends a heartbeat every two seconds. It prevents App Nap while the guard runs.
