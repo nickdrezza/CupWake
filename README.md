@@ -7,8 +7,7 @@ An empty cup means Off. A filled cup with steam means On.
 A small native macOS app that keeps agents and other tasks running with the lid closed.
 Click to turn it on. Click again to turn it off. That is the whole app.
 
-The [v0.2.0 preview](https://github.com/nickdrezza/CupWake/releases/tag/v0.2.0) prevents idle sleep only.
-Build this branch to use the new lid control. This change has no published release yet.
+[**Download the v0.3.0 preview →**](https://github.com/nickdrezza/CupWake/releases/tag/v0.3.0)
 
 ## One cup. Two states.
 

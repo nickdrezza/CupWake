@@ -1,8 +1,7 @@
 # Build status
 
 Checked on 13 October 2026 on arm64 macOS 27.0.1 with Apple Swift 6.4.
-This file records local checks for the lid-close change on `codex/closed-lid-awake`.
-No new release was published.
+This file records local checks for the v0.3.0 preview.
 
 ## Passed
 
