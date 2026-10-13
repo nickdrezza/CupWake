@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="title desc">
+  <title id="title">CupWake. One cup. One click.</title>
+  <desc id="desc">An empty cup means Off. A full cup with steam means On.</desc>
+  <rect width="960" height="300" rx="24" fill="#f4f1eb"/>
+  <circle cx="915" cy="10" r="170" fill="#ebe5da"/>
+  <text x="52" y="105" font-family="system-ui, sans-serif" font-size="46" font-weight="700" fill="#22211f">CupWake</text>
+  <text x="54" y="155" font-family="system-ui, sans-serif" font-size="25" fill="#57534d">One cup. One click.</text>
+  <text x="54" y="213" font-family="system-ui, sans-serif" font-size="16" fill="#57534d">A small macOS menu-bar switch for caffeinate.</text>
+  <rect x="518" y="63" width="155" height="175" rx="25" fill="#fff"/>
+  <rect x="748" y="63" width="155" height="175" rx="25" fill="#e66c32"/>
+  <g transform="translate(554 164) scale(5 -5)" fill="none" stroke="#22211f" stroke-width="1.5" stroke-linecap="round">
+    <path d="M12.5 10.5 C17 10.5 17 5.5 12.5 5.5"/>
+    <rect x="1.5" y="4" width="11" height="8" rx="2"/>
+    <path d="M1 1.5 H14"/>
+  </g>
+  <g transform="translate(784 164) scale(5 -5)" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round">
+    <path d="M12.5 10.5 C17 10.5 17 5.5 12.5 5.5"/>
+    <rect x="1.5" y="4" width="11" height="8" rx="2" fill="#fff"/>
+    <path d="M1 1.5 H14"/>
+    <path d="M4.5 17 C5.7 16 3.3 14.8 4.5 13.8 M8.5 17 C9.7 16 7.3 14.8 8.5 13.8" stroke-width="1"/>
+  </g>
+  <path d="M695 148 H727 M719 140 L727 148 L719 156" fill="none" stroke="#777168" stroke-width="2" stroke-linecap="round"/>
+  <text x="595" y="215" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" font-weight="600" fill="#22211f">Off</text>
+  <text x="825" y="215" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" font-weight="600" fill="#fff">On</text>
+</svg>
