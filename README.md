@@ -4,19 +4,20 @@
 
 ![CupWake: an empty cup means Off. A full cup with steam means On.](docs/cupwake.svg)
 
-A small native macOS app that puts `caffeinate` in your menu bar.
+A small native macOS app that keeps agents and other tasks running with the lid closed.
 Click to turn it on. Click again to turn it off. That is the whole app.
 
-[**Download the preview →**](https://github.com/nickdrezza/CupWake/releases/tag/v0.2.0)
+The [v0.2.0 preview](https://github.com/nickdrezza/CupWake/releases/tag/v0.2.0) prevents idle sleep only.
+Build this branch to use the new lid control. This change has no published release yet.
 
 ## One cup. Two states.
 
 - **Empty cup:** Off.
-- **Full cup with steam:** On. The Mac stays awake during idle time.
+- **Full cup with steam:** On. CupWake prevents idle sleep and lid-close sleep.
 - **Right-click:** Quit CupWake. Control-click works too.
 
 CupWake starts Off. It has no window, settings, timer, or saved state.
-It uses three small Swift source files and no package dependencies.
+It has no package dependencies.
 
 > **Do not use CupWake while your Mac is in a backpack or an enclosed space.**
 > Keep the Mac on an open surface with airflow. CupWake does not monitor heat or battery charge.
@@ -32,16 +33,46 @@ See [Apple's distribution guide](https://developer.apple.com/developer-id/) for 
 
 ## What On does
 
-CupWake runs `/usr/bin/caffeinate -w <CupWake PID>` with no assertion flags.
-This uses the default `caffeinate` behavior: prevent idle system sleep.
-The display can still sleep. CupWake does not change lid-close behavior or power settings.
+CupWake starts one guard process from its own executable. The guard holds a
+`PreventUserIdleSystemSleep` assertion. It also disables lid-close sleep with the
+`kPMSetClamshellSleepState` control on `IOPMrootDomain`. No external display or administrator
+password is required on the tested Mac.
 
-Off and Quit stop only the child that CupWake started. The `-w` option makes the child exit
-if CupWake exits, including after a crash. If the child exits, the icon returns to Off.
-If startup fails, the icon stays Off and the app sounds a beep.
-Other apps can still prevent sleep after CupWake turns Off.
+CupWake does not hold a display-sleep assertion. It does not change display timers, brightness,
+screen-lock settings, or persistent power settings. The display can turn off as usual.
+An explicit Apple-menu Sleep command can still put the Mac to sleep.
 
-See `man caffeinate` on your Mac for the command reference.
+The lid control is an internal Apple interface. It can change between macOS versions.
+The guard repeats the request at least once per second while it receives a heartbeat.
+CupWake shows On only after the assertion and the lid request succeed. A successful request
+does not prove that physical lid-close behavior works on every Mac.
+
+Off and Quit close the guard pipe. The guard restores lid sleep, releases its assertion, and exits.
+A CupWake crash also closes the pipe. If CupWake stops responding, the guard restores sleep
+after 15 seconds without a heartbeat. If the guard is killed, the running app restores lid sleep.
+If macOS rejects a restore request, the guard or app retries before it reports Off.
+
+If both the app and guard are forcibly killed, cleanup cannot run. Restart the Mac to clear
+the temporary lid control. Do not run another lid-control app at the same time. These apps
+share the same system control. Other apps can still prevent idle sleep after CupWake turns Off.
+
+If startup fails, the cup stays Off and the app sounds a beep. CupWake does not start agents,
+change network access, or repair an agent connection. A working network and remote-access
+service are still required to reach an agent.
+
+| Setting | Action | Result |
+| --- | --- | --- |
+| On | Close the lid | CupWake requests continued system operation. Agents can continue to run. |
+| On | Let the display turn off | The system stays awake. Display sleep remains allowed. |
+| On | Lock the screen | Background agents can continue to run. |
+| On | Select Apple menu → Sleep | Manual sleep remains allowed. Agents pause while the Mac sleeps. |
+| On | Click the cup | The guard restores lid sleep and idle sleep. The cup then shows Off. |
+| On | Quit CupWake | The guard restores sleep and exits. |
+| Off | Click the cup | The cup shows On after both power requests succeed. |
+| Off | Close the lid | Normal macOS lid behavior applies. |
+| Either | Restart and open CupWake | CupWake starts Off. |
+
+See [BUILD_STATUS.md](BUILD_STATUS.md) for the hardware checks that remain open.
 
 ## Build from source
 
@@ -55,7 +86,7 @@ sh Scripts/build-app.sh
 open dist/CupWake.app
 ```
 
-Tests briefly run real `caffeinate` processes. Run them with the Mac on an open surface.
+Tests use fake power controls and temporary guard processes. They do not put the Mac to sleep.
 The build script creates a locally signed app with Hardened Runtime in `dist/`.
 It does not install the app or change system settings. Do not build as root.
 
@@ -70,12 +101,16 @@ sh Scripts/package-release.sh
 | File | Purpose |
 | --- | --- |
 | `CupWakeApp.swift` | Menu-bar item, click actions, and Quit. |
-| `CaffeinateController.swift` | One owned child process and exit cleanup. |
+| `AwakeController.swift` | One owned guard, heartbeat, startup check, and exit cleanup. |
+| `AwakeWorker.swift` | Idle assertion, lid request, timeout, and restore. |
+| `LidSleepControl.swift` | IOKit calls and session ownership. |
 | `CupIcon.swift` | Empty and full vector cup icons. |
 
-No background timer, network request, power monitor, or privileged helper is used.
-Stopping the child does not block the main thread. Old exit callbacks cannot clear a new child.
-Tests cover process ownership, shutdown, startup errors, and both icons at 1× and 2×.
+No network request, power monitor, or privileged helper is used.
+The parent sends a heartbeat every two seconds. It prevents App Nap while the guard runs.
+Stopping the guard does not block the main thread. Old exit callbacks cannot clear a new guard.
+Tests cover process ownership, cleanup order, restore errors, cancellation, startup errors,
+and both icons at 1× and 2×.
 See [BUILD_STATUS.md](BUILD_STATUS.md) for the checks and limits of this build.
 
 ## License
