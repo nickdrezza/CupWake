@@ -10,7 +10,7 @@ architecture=$(lipo -archs "$app_dir/Contents/MacOS/CupWake" | tr ' ' '-')
 archive="CupWake-$version-macos-$architecture.zip"
 codesign --verify --strict "$app_dir"
 plutil -lint "$app_dir/Contents/Info.plist"
-ditto -c -k --sequesterRsrc --keepParent "$app_dir" "$project_dir/dist/$archive"
+ditto -c -k --norsrc --noextattr --keepParent "$app_dir" "$project_dir/dist/$archive"
 cd "$project_dir/dist"
 shasum -a 256 "$archive" > "$archive.sha256"
 printf '%s\n' "$project_dir/dist/$archive" "$project_dir/dist/$archive.sha256"
