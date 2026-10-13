@@ -4,6 +4,12 @@ import AppKit
 @MainActor enum CupIcon {
     static func image(isOn: Bool) -> NSImage {
         let image = NSImage(size: NSSize(width: 18, height: 18), flipped: false) { _ in
+            NSGraphicsContext.saveGraphicsState()
+            defer { NSGraphicsContext.restoreGraphicsState() }
+            // Keep the cup at the same position in both states.
+            let offset = NSAffineTransform()
+            offset.translateX(by: 0.3125, yBy: 0.375)
+            offset.concat()
             NSColor.black.set()
             let handle = NSBezierPath()
             handle.move(to: NSPoint(x: 12.5, y: 10.5))
